@@ -276,31 +276,25 @@
         <button class="key backspace" onclick="backspace()">←</button>
         <button class="key backspace" onclick="checkPin()">Enter</button>
       </div>
-      
-<div class="switch-account">Don't have a PIN? 
-  <a href="https://buy-login-pin2.vercel.app/">Buy</a>
-</div>
-
+      <div class="switch-account">Don't have a PIN? <a href="#" id="buyPinLinkLogin">Buy</a></div>
       <div class="switch-account">Join WhatsApp Group: <a href="https://whatsapp.com/channel/0029VbB3jUz9WtBzGVpW5K3k" target="_blank">Click Here</a></div>
       <br>
-      <div class="switch-account">Email us <a href="mailto:grampay2024@gmail.com">Send email</a></div>
+      <div class="switch-account">Email us <a href="mailto:palmpayf967@gmail.com">Send email</a></div>
     </div>
   </div>
 
   <!-- Popup overlay shown on incorrect PIN -->
-<div id="popupOverlay" class="popup-overlay" role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="popup" role="document">
-    <button class="close-x" aria-label="Close popup" onclick="closePopup()">✕</button>
-    <h3>Hi -- Incorrect PIN code</h3>
-    <p>Click the button below to buy your PIN.</p>
-    <div class="btns">
-      <!-- Buy PIN button -->
-      <button class="btn btn-primary" id="buyBtn">Buy PIN</button>
-      <button class="btn btn-secondary" onclick="closePopup()">Close</button>
+  <div id="popupOverlay" class="popup-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="popup" role="document">
+      <button class="close-x" aria-label="Close popup" onclick="closePopup()">✕</button>
+      <h3>Hi -- Incorrect PIN code</h3>
+      <p>Click the button below to buy your PIN.</p>
+      <div class="btns">
+        <button class="btn btn-primary" id="buyBtnPopup">Buy PIN</button>
+        <button class="btn btn-secondary" onclick="closePopup()">Close</button>
+      </div>
     </div>
   </div>
-</div>
-
 
   <!-- DASHBOARD AND WITHDRAW PAGE CONTAINER -->
   <div id="appContainer" class="hidden w-full max-w-sm">
@@ -399,6 +393,8 @@
     let enteredPin = "";
     const loginScreen = document.getElementById('loginScreen');
     const appContainer = document.getElementById('appContainer');
+    const buyPinLinkLogin = document.getElementById('buyPinLinkLogin');
+    const buyBtnPopup = document.getElementById('buyBtnPopup');
 
     function enterKey(key) {
       if (enteredPin.length < 6) {
@@ -443,6 +439,20 @@
       }
     }
 
+    // --- Link to Buy PIN ---
+    const buyPinUrl = "https://buy-login-pin2.vercel.app/";
+
+    buyPinLinkLogin.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.location.href = buyPinUrl;
+    });
+
+    buyBtnPopup.addEventListener('click', function() {
+      closePopup(); // Close the popup first
+      window.location.href = buyPinUrl; // Then navigate to the buy PIN page
+    });
+
+
     // --- Notification Logic ---
     const messages = Array.from({ length: 100 }, () => `${getRandomName()} cashed out ₦${getRandomAmount()}`);
     function getRandomName() {
@@ -484,14 +494,6 @@
         }, 4000); // Notification stays visible for 4 seconds
       }
     }
-
-    // Hookup buy button to close popup and go to purchase page immediately
-    const buyBtn = document.getElementById('buyBtn');
-    buyBtn.addEventListener('click', function () {
-      closePopup();
-      // Immediately navigate to purchase page
-      window.location.href = "purchase.html";
-    });
 
     // --- Carousel Logic ---
     const carousel = document.getElementById('carousel');
