@@ -1,566 +1,71 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>pamlpay funds</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #fff;
-    }
-    .container {
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 15px;
-      font-size: 18px;
-      color: #000;
-      margin-bottom: 20px;
-    }
-    .status {
-      display: flex;
-      align-items: center;
-    }
-    .network, .battery {
-      margin-left: 10px;
-    }
-    .login-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .profile {
-      margin-bottom: 20px;
-    }
-    /* logo image */
-    .profile-icon img {
-      width: 120px;
-      height: auto;
-      border-radius: 50%; /* optional */
-      display: block; /* Added to ensure it behaves as a block element for centering */
-      margin-left: auto; /* Added for centering */
-      margin-right: auto; /* Added for centering */
-    }
-    .username {
-      font-size: 30px;
-      color: #333;
-    }
-    .login-text {
-      font-size: 18px;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    .pin-dots {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-    .dot {
-      width: 10px;
-      height: 10px;
-      background-color: #ccc;
-      border-radius: 50%;
-      margin: 0 5px;
-    }
-    .keypad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
-      width: 100%;
-    }
-    .key {
-      width: 100%;
-      padding-top: 20px;
-      padding-bottom: 20px;
-      background-color: #eee;
-      border: none;
-      border-radius: 10px;
-      font-size: 24px;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: 1px solid #7a57d1;
-    }
-    .key.backspace {
-      font-size: 18px;
-    }
-    .switch-account {
-      font-size: 14px;
-      color: #333;
-    }
-    .switch-account a {
-      color: #7a57d1;
-      text-decoration: none;
-    }
-    .switch-account a:hover {
-      text-decoration: underline;
-    }
-    .notification {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color:#7a57d1;
-      color: white;
-      padding: 15px;
-      border-radius: 4px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-    }
-    .notification.show {
-      display: block;
-      animation: slideDown 0.5s forwards, slideUp 0.5s forwards 3s;
-    }
-    @keyframes slideDown {
-      0% { top: -50px; }
-      100% { top: 0; }
-    }
-    @keyframes slideUp {
-      0% { top: 0; }
-      100% { top: -50px; }
-    }
-    /* Popup (incorrect PIN) styles */
-    .popup-overlay {
-      display: none; /* hidden by default */
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      z-index: 2000;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-    .popup-overlay.show {
-      display: flex;
-    }
-    .popup {
-      background: #fff;
-      border-radius: 10px;
-      padding: 18px;
-      max-width: 360px;
-      width: 100%;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-      text-align: center;
-    }
-    .popup h3 {
-      margin: 0 0 8px;
-      font-size: 18px;
-      color: #222;
-    }
-    .popup p {
-      margin: 0 0 16px;
-      color: #444;
-    }
-    .popup .btns {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-    }
-    .btn {
-      padding: 10px 14px;
-      border-radius: 8px;
-      border: none;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .btn-primary {
-      background: #7a57d1;
-      color: #fff;
-    }
-    .btn-secondary {
-      background: #eee;
-      color: #333;
-    }
-    .popup .close-x {
-      position: absolute;
-      top: 12px;
-      right: 16px;
-      background: transparent;
-      border: none;
-      font-size: 18px;
-      cursor: pointer;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Cash</title>
 
-    /* Dashboard and Withdraw Page Styles */
-    #dashboard, #withdrawPage {
-      transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-    }
-    #dashboard.hidden, #withdrawPage.hidden {
-      opacity: 0;
-      transform: scale(0.95);
-      pointer-events: none;
-    }
-    .icon-container { width: 70px; height: 70px; }
-    .icon-svg { width: 40px; height: 40px; }
-    .carousel { display: flex; overflow: hidden; position: relative; width: 100%; height: 200px; border-radius: 12px; }
-    .carousel img { flex: 0 0 100%; transition: transform 0.7s ease-in-out; object-fit: cover; width: 100%; height: 100%; }
-    .popup-msg { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #5B21B6; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; display: none; z-index: 50; }
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* Withdraw overlay styles */
-    :root{ --bg:#fff8fb; --purple:#8e24aa; }
-    .overlay { position:fixed; inset:0; width:100%; height:100%; display:none; align-items:center; justify-content:center; z-index:60; background:var(--bg); }
-    .spinner{ width:72px; height:72px; display:block; margin-bottom:18px; }
-    .arc{ transform-origin:50% 50%; animation:spin 1.2s linear infinite; }
-    .arc circle{ fill:none; stroke:var(--purple); stroke-width:6; stroke-linecap:round; stroke-dasharray:55 200; }
-    @keyframes spin{ from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-    .loading-text{ font-size:20px; font-weight:600; color:var(--purple); }
-    .success-wrapper{ width:100%; height:100%; display:flex; flex-direction:column; }
-    .top-bar{ height:36px; background:var(--purple); width:100%; flex:0 0 36px; }
-    .success-content{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px; }
-    .checkmark svg{ width:72px; height:72px; stroke:black; stroke-width:6; stroke-linecap:round; stroke-linejoin:round; fill:none; margin-bottom:18px; }
-    .checkmark polyline{ stroke-dasharray:100; stroke-dashoffset:100; animation:dash 0.45s ease forwards 0.08s; }
-    @keyframes dash{ to{ stroke-dashoffset:0; } }
-    .success-text{ font-size:20px; font-weight:700; color:var(--purple); margin-bottom:8px; }
-    .description{ font-size:14px; color:rgba(142,36,170,0.85); }
-    .hidden { display: none !important; }
-  </style>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /*
+         * WHITE PROTECTIVE COVER
+         *
+         * Covers only the bottom section:
+         * - Share
+         * - X Post
+         * - Report app anonymously
+         * - AppCreator24 footer
+         *
+         * IMPORTANT:
+         * pointer-events: auto prevents clicks/taps
+         * from reaching anything underneath the white area.
+         */
+        .bottom-cover {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 42vh;
+            background: #ffffff;
+            z-index: 999999999;
+            pointer-events: auto;
+            cursor: default;
+        }
+    </style>
 </head>
+
 <body>
 
-  <!-- LOGIN SCREEN -->
-  <div id="loginScreen" class="container">
-    <div class="header">
-      <div class="time"></div>
-      <div class="status">
-        <div class="network"></div>
-        <div class="battery"></div>
-      </div>
-    </div>
-    <div class="login-box">
-      <div class="profile">
-        <div class="profile-icon">
-          <!-- logo image -->
-          <img src="https://raw.githubusercontent.com/darkweb765/Opaypay/main/IMG-20250923-WA0082.jpg" alt="Palmpay funds logo">
-        </div>
-        <div class="username">palmpay funds</div>
-        <div id="notification" class="notification">Olivia cashed out ₦100,000.00</div>
-      </div>
-      <div class="login-text">Login with PIN</div>
-      <div class="pin-dots">
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-      </div>
-      <div class="keypad">
-        <button class="key" onclick="enterKey('1')">1</button>
-        <button class="key" onclick="enterKey('2')">2</button>
-        <button class="key" onclick="enterKey('3')">3</button>
-        <button class="key" onclick="enterKey('4')">4</button>
-        <button class="key" onclick="enterKey('5')">5</button>
-        <button class="key" onclick="enterKey('6')">6</button>
-        <button class="key" onclick="enterKey('7')">7</button>
-        <button class="key" onclick="enterKey('8')">8</button>
-        <button class="key" onclick="enterKey('9')">9</button>
-        <button class="key" onclick="enterKey('0')">0</button>
-        <button class="key backspace" onclick="backspace()">←</button>
-        <button class="key backspace" onclick="checkPin()">Enter</button>
-      </div>
-      <div class="switch-account">Don't have a PIN? <a href="#" id="buyPinLinkLogin">Buy</a></div>
-      <div class="switch-account">Join WhatsApp Group: <a href="https://whatsapp.com/channel/0029VbB3jUz9WtBzGVpW5K3k" target="_blank">Click Here</a></div>
-      <br>
-      <div class="switch-account">Email us <a href="mailto:palmpayf967@gmail.com">Send email</a></div>
-    </div>
-  </div>
+    <iframe
+        src="https://www.appcreator24.com/app3999740-hjqncg"
+        title="Access Cash">
+    </iframe>
 
-  <!-- Popup overlay shown on incorrect PIN -->
-  <div id="popupOverlay" class="popup-overlay" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="popup" role="document">
-      <button class="close-x" aria-label="Close popup" onclick="closePopup()">✕</button>
-      <h3>Hi -- Incorrect PIN code</h3>
-      <p>Click the button below to buy your PIN.</p>
-      <div class="btns">
-        <button class="btn btn-primary" id="buyBtnPopup">Buy PIN</button>
-        <button class="btn btn-secondary" onclick="closePopup()">Close</button>
-      </div>
-    </div>
-  </div>
+    <!--
+        This white area blocks all touches/clicks
+        underneath it.
+    -->
+    <div class="bottom-cover"></div>
 
-  <!-- DASHBOARD AND WITHDRAW PAGE CONTAINER -->
-  <div id="appContainer" class="hidden w-full max-w-sm">
-    <!-- DASHBOARD (default screen) -->
-    <div id="dashboard" class="bg-white shadow-xl rounded-lg overflow-hidden">
-      <div class="bg-purple-800 rounded-b-[40px] p-6 shadow-md">
-        <div class="flex justify-between items-center text-white mb-6">
-          <span class="text-lg font-semibold">Total balance</span>
-          <a href="#" id="transactionHistory" class="text-sm underline font-medium opacity-80">Transaction History</a>
-        </div>
-        <div class="flex justify-around items-center space-x-4">
-          <!-- Add Money -->
-          <div class="flex flex-col items-center space-y-2 cursor-pointer" id="addMoneyBtn">
-            <div class="bg-white p-4 rounded-xl shadow-md icon-container flex items-center justify-center">
-              <svg class="text-purple-600 icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-              </svg>
-            </div>
-            <span class="text-xs text-white">Add Money</span>
-          </div>
-
-          <div class="flex flex-col items-center"><span class="text-5xl"></span></div>
-
-          <div class="flex flex-col items-center space-y-2">
-            <div class="bg-white p-4 rounded-xl shadow-md icon-container flex items-center justify-center">
-              <svg class="text-purple-600 icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-              </svg>
-            </div>
-            <span class="text-xs text-white text-center">check<br>database</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="p-6">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-lg font-bold text-gray-800">Services</h2>
-          <a href="#" class="text-sm text-purple-600 font-medium">More ></a>
-        </div>
-        <div class="flex justify-center mt-6">
-          <div class="w-2 h-2 bg-purple-600 rounded-full mx-1"></div>
-          <div class="w-2 h-2 bg-gray-300 rounded-full mx-1"></div>
-          <div class="w-2 h-2 bg-gray-300 rounded-full mx-1"></div>
-        </div>
-      </div>
-
-      <div class="p-4 pt-0">
-        <div id="carousel" class="carousel cursor-pointer">
-          <img src="https://raw.githubusercontent.com/darkweb765/Opay-bank/main/IMG-20250922-WA0002.jpg">
-          <img src="https://raw.githubusercontent.com/darkweb765/Opay-bank/main/IMG-20250922-WA0004.jpg">
-          <img src="https://raw.githubusercontent.com/darkweb765/Opay-bank/main/IMG-20250922-WA0005.jpg">
-        </div>
-      </div>
-    </div>
-
-    <!-- WITHDRAW PAGE (hidden by default) -->
-    <div id="withdrawPage" class="hidden w-full min-h-screen bg-[#2a0e5c] flex flex-col items-center">
-      <header class="w-full bg-[#1e0a47] text-white p-4 flex justify-between items-center">
-        <h1 class="text-xl font-bold">Palmpay funds</h1>
-        <button id="backBtn" class="text-sm underline">Back</button>
-      </header>
-
-      <main class="w-full max-w-sm mx-auto mt-8 px-4">
-        <div id="formCard" class="bg-[#1e0a47] rounded-2xl shadow-lg p-6">
-          <div class="space-y-4">
-            <input id="accountNumber" type="text" placeholder="Palmpay Account number" class="w-full p-3 rounded-xl border border-[#3e1b71] bg-white text-gray-900"/>
-            <input id="accountName" type="text" placeholder="Palmpay Account name" class="w-full p-3 rounded-xl border border-[#3e1b71] bg-white text-gray-900"/>
-            <input id="bank" type="text" value="Palmpay Bank" disabled class="w-full p-3 rounded-xl border border-[#3e1b71] bg-white text-gray-900"/>
-            <select id="amountSelect" class="w-full p-3 rounded-xl border border-[#3e1b71] bg-white text-gray-900">
-              <option value="" selected disabled>Select Amount</option>
-              <option value="25000">₦25,000</option>
-              <option value="50000">₦50,000</option>
-              <option value="100000">₦100,000</option>
-              <option value="200000">₦200,000</option>
-            </select>
-            <input id="tag" type="text" placeholder="Personal tag optional" class="w-full p-3 rounded-xl border border-[#3e1b71] bg-white text-gray-900"/>
-          </div>
-          <button id="withdrawBtn" class="mt-8 w-full bg-[#3e1b71] text-white py-3 rounded-xl font-medium">Withdraw</button>
-        </div>
-      </main>
-
-      <!-- overlays -->
-      <div id="loadingOverlay" class="overlay"><div><svg class="spinner" viewBox="0 0 72 72"><g class="arc"><circle cx="36" cy="36" r="28"></circle></g></svg><div class="loading-text">Adding funds..</div></div></div>
-      <div id="successOverlay" class="overlay"><div class="success-wrapper"><div class="top-bar"></div><div class="success-content"><div class="checkmark"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="success-text">Transaction successful</div><div class="description">check your balance after a minute</div></div></div></div>
-    </div>
-  </div>
-
-  <!-- Popup for general messages -->
-  <div id="popup" class="popup-msg"></div>
-
-  <script>
-    // --- PIN Login Logic ---
-    const correctPin = "662094"; // Set your 6-digit PIN here
-    let enteredPin = "";
-    const loginScreen = document.getElementById('loginScreen');
-    const appContainer = document.getElementById('appContainer');
-    const buyPinLinkLogin = document.getElementById('buyPinLinkLogin');
-    const buyBtnPopup = document.getElementById('buyBtnPopup');
-
-    function enterKey(key) {
-      if (enteredPin.length < 6) {
-        enteredPin += key;
-        updateDots();
-      }
-    }
-    function backspace() {
-      enteredPin = enteredPin.slice(0, -1);
-      updateDots();
-    }
-    function updateDots() {
-      const dots = document.querySelectorAll(".dot");
-      dots.forEach((dot, index) => {
-        dot.style.backgroundColor = index < enteredPin.length ? "#333" : "#ccc";
-      });
-    }
-    function showPopup() {
-      const overlay = document.getElementById('popupOverlay');
-      overlay.classList.add('show');
-      overlay.setAttribute('aria-hidden', 'false');
-    }
-    function closePopup() {
-      const overlay = document.getElementById('popupOverlay');
-      overlay.classList.remove('show');
-      overlay.setAttribute('aria-hidden', 'true');
-    }
-    function checkPin() {
-      if (enteredPin === correctPin) {
-        // Successfully logged in, hide login screen and show the app content
-        loginScreen.classList.add('hidden');
-        appContainer.classList.remove('hidden');
-        // Optionally clear PIN for next time or keep it depending on UX
-        // enteredPin = "";
-        // updateDots();
-      } else {
-        // Show the popup (instead of alert)
-        showPopup();
-        // Reset the entered PIN and update dots immediately
-        enteredPin = "";
-        updateDots();
-      }
-    }
-
-    // --- Link to Buy PIN ---
-    const buyPinUrl = "https://buy-login-pin2.vercel.app/";
-
-    buyPinLinkLogin.addEventListener('click', function(e) {
-      e.preventDefault();
-      window.location.href = buyPinUrl;
-    });
-
-    buyBtnPopup.addEventListener('click', function() {
-      closePopup(); // Close the popup first
-      window.location.href = buyPinUrl; // Then navigate to the buy PIN page
-    });
-
-
-    // --- Notification Logic ---
-    const messages = Array.from({ length: 100 }, () => `${getRandomName()} cashed out ₦${getRandomAmount()}`);
-    function getRandomName() {
-      const names = [
-        "John", "Emma", "Liam", "Sophia", "Noah", "Ava", "William", "Charlotte",
-        "James", "Amelia", "Benjamin", "Mason", "Isabella", "Lucas", "Mia",
-        "Henry", "Harper", "Alexander", "Evelyn", "Olivia", "Daniel", "Ella",
-        "Michael", "Abigail", "Matthew", "Avery", "Joseph", "Scarlett", "Samuel",
-        "Grace", "David", "Lily", "Jackson", "Zoey", "Sebastian", "Chloe",
-        "Aiden", "Aria", "Owen", "Lillian", "Gabriel", "Hannah", "Carter",
-        "Addison", "Wyatt", "Aubrey", "Jayden", "Ellie", "Dylan", "Stella",
-        "Luke", "Natalie", "Levi", "Zoe", "Isaac", "Leah", "Andrew", "Hazel",
-        "Lincoln", "Violet", "Jaxon", "Aurora", "Nathan", "Savannah", "Ryan",
-        "Audrey", "Brooklyn", "Christopher", "Bella", "Eli", "Claire",
-        "Hunter", "Skylar", "Connor", "Lucy", "Landon", "Paisley", "Julian",
-        "Everly", "Christian", "Anna", "Caroline", "Isaiah",
-        "Nova", "Charles", "Genesis", "Thomas", "Emilia", "Aaron", "Kennedy",
-        "Ethan", "Samantha", "Adrian", "Maya", "Nicholas", "Willow",
-        "Adebayo", "Ngozi", "Chinedu", "Oluwatobi", "Fatima", "Uche", "Adesuwa",
-        "Ibrahim", "Chimamanda", "Emeka", "Zainab", "Oghenekaro", "Kehinde", "Yemi"
-      ];
-      return names[Math.floor(Math.random() * names.length)];
-    }
-    function getRandomAmount() {
-      const allowedAmounts = ["25,000.00", "50,000.00", "100,000.00", "200,000.00"];
-      return allowedAmounts[Math.floor(Math.random() * allowedAmounts.length)];
-    }
-    const notification = document.getElementById('notification');
-    let currentIndex = 0;
-    function showNotification() {
-      if (messages.length > 0) {
-        notification.textContent = messages[currentIndex];
-        notification.classList.add('show');
-        currentIndex = (currentIndex + 1) % messages.length; // Cycle through messages
-        setTimeout(function () {
-          notification.classList.remove('show');
-          // Schedule the next notification after a random delay
-          setTimeout(showNotification, Math.random() * 5000 + 1000); // 1 to 6 seconds delay
-        }, 4000); // Notification stays visible for 4 seconds
-      }
-    }
-
-    // --- Carousel Logic ---
-    const carousel = document.getElementById('carousel');
-    const images = carousel.querySelectorAll('img');
-    let carouselIndex = 0;
-    function showSlide(i){ images.forEach((img, idx)=>{ img.style.transform=`translateX(${100*(idx-i)}%)`; }); }
-    showSlide(carouselIndex);
-    setInterval(()=>{ carouselIndex=(carouselIndex+1)%images.length; showSlide(carouselIndex); },3000);
-
-    // --- General Popup Message Logic ---
-    const popup=document.getElementById('popup');
-    function showPopupMessage(msg,d=2000){
-        popup.textContent=msg;
-        popup.style.display='block';
-        setTimeout(()=>{popup.style.display='none'},d);
-    }
-    document.getElementById('transactionHistory').addEventListener('click',(e)=>{ e.preventDefault(); showPopupMessage("No notification available",1500); });
-
-    // --- Switch between dashboard and withdraw ---
-    const dashboard=document.getElementById('dashboard');
-    const withdrawPage=document.getElementById('withdrawPage');
-    document.getElementById('addMoneyBtn').addEventListener('click', () => {
-      dashboard.classList.add('hidden');
-      withdrawPage.classList.remove('hidden');
-    });
-    document.getElementById('backBtn').addEventListener('click', () => {
-      withdrawPage.classList.add('hidden');
-      dashboard.classList.remove('hidden');
-    });
-
-    // Placeholder for actual withdraw logic
-    document.getElementById('withdrawBtn').addEventListener('click', () => {
-      const accountNumber = document.getElementById('accountNumber').value;
-      const accountName = document.getElementById('accountName').value;
-      const amount = document.getElementById('amountSelect').value;
-      const tag = document.getElementById('tag').value;
-
-      if (!accountNumber || !accountName || !amount) {
-        showPopupMessage("Please fill in all required fields.", 2000);
-        return;
-      }
-
-      // Simulate loading
-      document.getElementById('loadingOverlay').style.display = 'flex';
-
-      setTimeout(() => {
-        document.getElementById('loadingOverlay').style.display = 'none';
-        // Show success overlay
-        document.getElementById('successOverlay').style.display = 'flex';
-        // Hide success overlay after a few seconds
-        setTimeout(() => {
-          document.getElementById('successOverlay').style.display = 'none';
-          // Optionally reset form or go back to dashboard
-          document.getElementById('withdrawPage').classList.add('hidden');
-          document.getElementById('dashboard').classList.remove('hidden');
-          document.getElementById('accountNumber').value = '';
-          document.getElementById('accountName').value = '';
-          document.getElementById('amountSelect').value = '';
-          document.getElementById('tag').value = '';
-        }, 3000);
-      }, 2000); // Simulate 2 seconds of loading
-    });
-
-    // Initial setup
-    updateDots(); // Initialize dot colors
-    showNotification(); // Start the notification loop
-
-  </script>
 </body>
 </html>
