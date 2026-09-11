@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width,
+                   initial-scale=1.0,
+                   maximum-scale=1.0,
+                   user-scalable=no">
+
     <title>Access Cash</title>
 
     <style>
@@ -16,40 +22,75 @@
         body {
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            margin: 0;
+            padding: 0;
+
             background: #ffffff;
+
+            /* Stop the wrapper page from scrolling */
+            overflow: hidden;
+
+            /* Keep the screen fixed */
+            position: fixed;
+            top: 0;
+            left: 0;
+
+            overscroll-behavior: none;
         }
 
+        body {
+            touch-action: none;
+        }
+
+        /* AppCreator24 page */
         iframe {
+            position: fixed;
+            top: 0;
+            left: 0;
+
             width: 100%;
             height: 100%;
+
             border: none;
-            display: block;
+            margin: 0;
+            padding: 0;
+
+            overflow: hidden;
         }
 
         /*
-         * WHITE PROTECTIVE COVER
+         * WHITE BOTTOM COVER
          *
-         * Covers only the bottom section:
+         * Covers:
          * - Share
          * - X Post
          * - Report app anonymously
          * - AppCreator24 footer
          *
-         * IMPORTANT:
-         * pointer-events: auto prevents clicks/taps
-         * from reaching anything underneath the white area.
+         * It also blocks taps and swipes
+         * in the covered area.
          */
         .bottom-cover {
             position: fixed;
+
             left: 0;
             bottom: 0;
+
             width: 100%;
             height: 42vh;
+
             background: #ffffff;
+
             z-index: 999999999;
+
+            /* Block clicks/taps */
             pointer-events: auto;
-            cursor: default;
+
+            /* Block scrolling/swiping */
+            touch-action: none;
+
+            /* No visual border */
+            border: none;
         }
     </style>
 </head>
@@ -58,12 +99,13 @@
 
     <iframe
         src="https://www.appcreator24.com/app3999740-hjqncg"
-        title="Access Cash">
+        title="Access Cash"
+        scrolling="no">
     </iframe>
 
     <!--
-        This white area blocks all touches/clicks
-        underneath it.
+        White area covering the unwanted
+        bottom section and blocking interaction.
     -->
     <div class="bottom-cover"></div>
 
